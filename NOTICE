@@ -1,0 +1,8 @@
+This project includes a TypeScript/GLSL port of filters and demo assets from PixiJS Filters.
+
+Source project: https://github.com/pixijs/filters
+License: MIT
+Copyright: PixiJS Team and contributors
+
+The original MIT license is preserved in this repository's LICENSE file and the source repository
+also includes an MIT license.

@@ -1,0 +1,27 @@
+{
+  "name": "phaserjs-filters",
+  "version": "0.1.0",
+  "description": "Phaser 4 filter controllers and demo ported from the MIT PixiJS filters library.",
+  "license": "MIT",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "generate:filters": "node scripts/generate-filters.mjs",
+    "dev": "vite --host 0.0.0.0",
+    "build": "npm run generate:filters && tsc --noEmit && vite build",
+    "typecheck": "npm run generate:filters && tsc --noEmit",
+    "test": "npm run generate:filters && vitest run"
+  },
+  "dependencies": {
+    "lil-gui": "^0.20.0",
+    "phaser": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.1",
+    "@vitejs/plugin-basic-ssl": "^2.0.0",
+    "jsdom": "^29.1.1",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5",
+    "vitest": "^3.1.4"
+  }
+}
