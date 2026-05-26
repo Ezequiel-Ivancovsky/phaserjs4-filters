@@ -12,7 +12,8 @@ import {
 type Manager = Phaser.Renderer.WebGL.RenderNodes.RenderNodeManager;
 
 export interface BlurFilterOptions {
-  strength?: number;
+  blur?: number;
+  quality?: number;
 }
 
 export const BlurFilterMetadata = {
@@ -20,8 +21,8 @@ export const BlurFilterMetadata = {
   displayName: 'Blur',
   source: 'demo-extra',
   fishOnly: false,
-  defaults: {"strength":8},
-  controls: [{"key":"strength","type":"number","min":0,"max":30}]
+  defaults: {"blur":8,"quality":4},
+  controls: [{"key":"blur","type":"number","min":0,"max":100},{"key":"quality","type":"number","min":1,"max":10}]
 } satisfies FilterMetadata;
 
 export class PhaserBlurFilter extends GeneratedFilterNode {

@@ -25,8 +25,8 @@ export const TiltShiftFilterMetadata = {
   displayName: 'Tilt Shift',
   source: 'pixi-source',
   fishOnly: false,
-  defaults: {"blur":8,"gradientBlur":600,"startX":0,"startY":0.35,"endX":1,"endY":0.65},
-  controls: [{"key":"blur","type":"number","min":0,"max":30},{"key":"gradientBlur","type":"number","min":0,"max":1000},{"key":"startY","type":"number","min":0,"max":1},{"key":"endY","type":"number","min":0,"max":1}]
+  defaults: {"blur":100,"gradientBlur":600,"startX":0,"startY":0.5,"endX":1,"endY":0.5},
+  controls: [{"key":"blur","type":"number","min":0,"max":200},{"key":"gradientBlur","type":"number","min":0,"max":1000},{"key":"startX","type":"number","min":0,"max":1},{"key":"startY","type":"number","min":0,"max":1},{"key":"endX","type":"number","min":0,"max":1},{"key":"endY","type":"number","min":0,"max":1}]
 } satisfies FilterMetadata;
 
 export class PhaserTiltShiftFilter extends GeneratedFilterNode {

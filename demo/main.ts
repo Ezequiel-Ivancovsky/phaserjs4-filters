@@ -155,6 +155,17 @@ class DemoScene extends Phaser.Scene {
           continue;
         }
 
+        if (controller.metadata.id === 'GodrayFilter') {
+          if (controller.uniforms.animating !== false) {
+            const time = Number(controller.uniforms.time ?? 0) + delta / 1000;
+
+            controller.uniforms.time = time;
+            (controller as unknown as { time: number }).time = time;
+          }
+
+          continue;
+        }
+
         if ('time' in controller.uniforms) {
           controller.uniforms.time = this.timer;
           (controller as unknown as { time: number }).time = this.timer;

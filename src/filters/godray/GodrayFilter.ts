@@ -12,11 +12,15 @@ import {
 type Manager = Phaser.Renderer.WebGL.RenderNodes.RenderNodeManager;
 
 export interface GodrayFilterOptions {
+  animating?: boolean;
+  time?: number;
   gain?: number;
   lacunarity?: number;
+  alpha?: number;
   parallel?: boolean;
-  time?: number;
   angle?: number;
+  centerX?: number;
+  centerY?: number;
 }
 
 export const GodrayFilterMetadata = {
@@ -24,8 +28,8 @@ export const GodrayFilterMetadata = {
   displayName: 'Godray',
   source: 'pixi-source',
   fishOnly: false,
-  defaults: {"gain":0.5,"lacunarity":2.5,"parallel":true,"time":0,"angle":30},
-  controls: [{"key":"gain","type":"number","min":0,"max":2},{"key":"lacunarity","type":"number","min":0,"max":5},{"key":"parallel","type":"boolean"},{"key":"angle","type":"number","min":0,"max":360}]
+  defaults: {"animating":true,"time":0,"gain":0.6,"lacunarity":2.75,"alpha":1,"parallel":true,"angle":30,"centerX":0.5,"centerY":-0.15},
+  controls: [{"key":"animating","type":"boolean"},{"key":"time","type":"number","min":0,"max":1},{"key":"gain","type":"number","min":0,"max":1},{"key":"lacunarity","type":"number","min":0,"max":5},{"key":"alpha","type":"number","min":0,"max":1},{"key":"parallel","type":"boolean"},{"key":"angle","type":"number","min":-60,"max":60},{"key":"centerX","type":"number","min":-0.25,"max":1.25},{"key":"centerY","type":"number","min":-1.5,"max":0}]
 } satisfies FilterMetadata;
 
 export class PhaserGodrayFilter extends GeneratedFilterNode {

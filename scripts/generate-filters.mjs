@@ -29,7 +29,7 @@ const pixiFilters = [
   ['EmbossFilter', 'emboss', { strength: 5 }, [['strength', 'number', 0, 20]], "vec2 p = 1.0 / max(uResolution, vec2(1.0)); vec3 e = readInput(uv - p).rgb - readInput(uv + p).rgb; color.rgb = vec3(0.5) + e * uStrength; gl_FragColor = color;"],
   ['GlitchFilter', 'glitch', { slices: 5, offset: 10, direction: 0, fillMode: 0, seed: 0 }, [['slices', 'number', 1, 20], ['offset', 'number', 0, 50], ['direction', 'number', 0, 360], ['seed', 'number', 0, 20]], "float band = floor(uv.y * max(uSlices, 1.0)); float rnd = fract(sin(band * 12.9898 + uSeed + uTime * 0.01) * 43758.5453); vec2 dir = vec2(cos(radians(uDirection)), sin(radians(uDirection))); vec2 guv = uv + dir * (rnd - 0.5) * uOffset / max(uResolution, vec2(1.0)); gl_FragColor = readInput(guv);"],
   ['GlowFilter', 'glow', { distance: 15, outerStrength: 2, innerStrength: 0, color: 0xffffff, alpha: 1, quality: 0.2, knockout: false }, [['distance', 'number', 0, 20], ['innerStrength', 'number', 0, 20], ['outerStrength', 'number', 0, 20], ['color', 'color'], ['quality', 'number', 0, 1], ['alpha', 'number', 0, 1], ['knockout', 'boolean']], "float currentInside = step(0.0, uv.x) * step(0.0, uv.y) * step(uv.x, 1.0) * step(uv.y, 1.0); color *= currentInside; float totalAlpha = 0.0; float sampleCount = 0.0; vec2 radius = vec2(max(uDistance, 0.0)) / max(uResolution, vec2(1.0)); for (int x = -4; x <= 4; x++) { for (int y = -4; y <= 4; y++) { vec2 dir = vec2(float(x), float(y)); float dist = length(dir); if (dist > 0.0 && dist <= 4.0) { vec2 sampleUv = uv + normalize(dir) * radius * (dist / 4.0); float sampleInside = step(0.0, sampleUv.x) * step(0.0, sampleUv.y) * step(sampleUv.x, 1.0) * step(sampleUv.y, 1.0); float weight = 1.0 - dist / 4.0; totalAlpha += readInput(sampleUv).a * sampleInside * weight; sampleCount += weight; } }} float alphaRatio = sampleCount > 0.0 ? clamp(totalAlpha / sampleCount, 0.0, 1.0) : 0.0; vec4 glowColor = vec4(vec3(uColorR, uColorG, uColorB), uAlpha); float innerGlowAlpha = (1.0 - alphaRatio) * uInnerStrength * color.a * uAlpha; float innerGlowStrength = min(1.0, innerGlowAlpha); vec4 innerColor = mix(color, glowColor, innerGlowStrength); float outerGlowAlpha = alphaRatio * uOuterStrength * (1.0 - color.a) * uAlpha; float outerGlowStrength = min(1.0 - innerColor.a, outerGlowAlpha); vec4 outerGlowColor = outerGlowStrength * glowColor; if (uKnockout > 0.5) { float resultAlpha = clamp(outerGlowAlpha + innerGlowAlpha, 0.0, 1.0); gl_FragColor = vec4(glowColor.rgb * resultAlpha, resultAlpha); } else { gl_FragColor = innerColor + outerGlowColor; }"],
-  ['GodrayFilter', 'godray', { gain: 0.5, lacunarity: 2.5, parallel: true, time: 0, angle: 30 }, [['gain', 'number', 0, 2], ['lacunarity', 'number', 0, 5], ['parallel', 'boolean'], ['angle', 'number', 0, 360]], "vec2 d = vec2(cos(radians(uAngle)), sin(radians(uAngle))); float rays = pow(max(0.0, sin(dot(uv, d) * 40.0 + uTime * 0.03)), max(uLacunarity, 0.1)); color.rgb += rays * uGain * color.a; gl_FragColor = color;"],
+  ['GodrayFilter', 'godray', { animating: true, time: 0, gain: 0.6, lacunarity: 2.75, alpha: 1, parallel: true, angle: 30, centerX: 0.5, centerY: -0.15 }, [['animating', 'boolean'], ['time', 'number', 0, 1], ['gain', 'number', 0, 1], ['lacunarity', 'number', 0, 5], ['alpha', 'number', 0, 1], ['parallel', 'boolean'], ['angle', 'number', -60, 60], ['centerX', 'number', -0.25, 1.25], ['centerY', 'number', -1.5, 0]], "vec2 safeResolution = max(uResolution, vec2(1.0)); float aspect = safeResolution.y / safeResolution.x; vec2 coord = vec2(uv.x, 1.0 - uv.y); float d; if (uParallel > 0.5) { float radiansAngle = radians(uAngle); float lightX = cos(radiansAngle); float lightY = sin(radiansAngle); d = lightX * coord.x + lightY * coord.y * aspect; } else { float dx = coord.x - uCenterX; float dy = (coord.y - uCenterY) * aspect; float dis = sqrt(dx * dx + dy * dy) + 0.00001; d = dy / dis; } vec3 dir = vec3(d, d, 0.0); float noise = godrayTurb(dir + vec3(uTime, 0.0, 62.1 + uTime) * 0.05, max(uLacunarity, 0.0001), uGain); noise = mix(noise, 0.0, 0.3); vec4 mist = vec4(vec3(noise), 1.0) * (1.0 - coord.y); mist *= uAlpha; gl_FragColor = color + mist;"],
   ['GrayscaleFilter', 'grayscale', { amount: 1 }, [['amount', 'number', 0, 1]], "color.rgb = mix(color.rgb, vec3(luma(color.rgb)), uAmount); gl_FragColor = color;"],
   ['HslAdjustmentFilter', 'hsl-adjustment', { hue: 0, saturation: 1, lightness: 0, colorize: false }, [['hue', 'number', -180, 180], ['saturation', 'number', 0, 3], ['lightness', 'number', -1, 1], ['colorize', 'boolean']], "float a = radians(uHue); mat3 rot = mat3(0.213 + cos(a)*0.787 - sin(a)*0.213, 0.715 - cos(a)*0.715 - sin(a)*0.715, 0.072 - cos(a)*0.072 + sin(a)*0.928, 0.213 - cos(a)*0.213 + sin(a)*0.143, 0.715 + cos(a)*0.285 + sin(a)*0.140, 0.072 - cos(a)*0.072 - sin(a)*0.283, 0.213 - cos(a)*0.213 - sin(a)*0.787, 0.715 - cos(a)*0.715 + sin(a)*0.715, 0.072 + cos(a)*0.928 + sin(a)*0.072); color.rgb = rot * color.rgb; color.rgb = mix(vec3(luma(color.rgb)), color.rgb, uSaturation) + uLightness; gl_FragColor = color;"],
   ['KawaseBlurFilter', 'kawase-blur', { strength: 4, quality: 3, pixelSizeX: 1, pixelSizeY: 1, clamp: true }, [['strength', 'number', 0, 20], ['quality', 'number', 1, 20], ['pixelSizeX', 'number', 0, 10], ['pixelSizeY', 'number', 0, 10], ['clamp', 'boolean']], "float quality = clamp(floor(uQuality + 0.5), 1.0, 12.0); vec2 pixelSize = max(vec2(uPixelSizeX, uPixelSizeY), vec2(0.0)); vec4 sum = readInput(uv) * 0.5; float total = 0.5; for (int i = 0; i < 12; i++) { float fi = float(i); if (fi < quality && uStrength > 0.0) { float kernel = ((quality - fi) / quality) * uStrength + 0.5; vec2 offset = kernel * pixelSize / max(uResolution, vec2(1.0)); vec2 uv1 = uv + offset; vec2 uv2 = uv - offset; vec2 uv3 = uv + vec2(offset.x, -offset.y); vec2 uv4 = uv + vec2(-offset.x, offset.y); if (uClamp > 0.5) { uv1 = clamp(uv1, vec2(0.0), vec2(1.0)); uv2 = clamp(uv2, vec2(0.0), vec2(1.0)); uv3 = clamp(uv3, vec2(0.0), vec2(1.0)); uv4 = clamp(uv4, vec2(0.0), vec2(1.0)); } float weight = 1.0 - fi / max(quality, 1.0); sum += (readInput(uv1) + readInput(uv2) + readInput(uv3) + readInput(uv4)) * (0.25 * weight); total += weight; }} gl_FragColor = sum / max(total, 0.0001);"],
@@ -44,14 +44,14 @@ const pixiFilters = [
   ['ShockwaveFilter', 'shockwave', { animating: true, centerX: 0.5, centerY: 0.5, speed: 500, amplitude: 30, wavelength: 160, brightness: 1, radius: 800, time: 0 }, [['animating', 'boolean'], ['speed', 'number', 500, 2000], ['amplitude', 'number', 1, 100], ['wavelength', 'number', 2, 400], ['brightness', 'number', 0.2, 2], ['radius', 'number', 100, 2000], ['centerX', 'number', 0, 1], ['centerY', 'number', 0, 1]], "const float PI = 3.14159; vec2 safeResolution = max(uResolution, vec2(1.0)); vec2 centerUv = vec2(uCenterX, uCenterY); float halfWavelength = uWavelength * 0.5 / safeResolution.x; float maxRadius = uRadius / safeResolution.x; float currentRadius = uTime * uSpeed / safeResolution.x; float fade = 1.0; if (maxRadius > 0.0) { if (currentRadius > maxRadius) { gl_FragColor = color; return; } fade = 1.0 - pow(currentRadius / maxRadius, 2.0); } vec2 dir = uv - centerUv; dir.y *= safeResolution.y / safeResolution.x; float dist = length(dir); if (dist <= 0.0 || dist < currentRadius - halfWavelength || dist > currentRadius + halfWavelength) { gl_FragColor = color; return; } vec2 diffUv = normalize(dir); float diff = (dist - currentRadius) / max(halfWavelength, 0.00001); float p = 1.0 - pow(abs(diff), 2.0); float powDiff = 1.25 * sin(diff * PI) * p * (uAmplitude * fade); vec2 coord = uv + diffUv * powDiff / safeResolution; vec2 clampedCoord = clamp(coord, vec2(0.0), vec2(1.0)); vec4 waveColor = readInput(clampedCoord); if (coord != clampedCoord) { waveColor *= max(0.0, 1.0 - length(coord - clampedCoord)); } waveColor.rgb *= 1.0 + (uBrightness - 1.0) * p * fade; gl_FragColor = waveColor;"],
   ['SimpleLightmapFilter', 'simple-lightmap', { color: 0xffffff, alpha: 1 }, [['color', 'color'], ['alpha', 'number', 0, 1]], "vec2 q = uv - 0.5; float light = smoothstep(0.8, 0.0, length(q)); color.rgb *= mix(vec3(1.0), vec3(uColorR, uColorG, uColorB) * (1.0 + light), uAlpha); gl_FragColor = color;"],
   ['SimplexNoiseFilter', 'simplex-noise', { strength: 0.25, step: 0.1 }, [['strength', 'number', 0, 1], ['step', 'number', 0, 1]], "float n = fract(sin(dot(floor(uv * uResolution * max(uStep, 0.01)), vec2(12.9898,78.233))) * 43758.5453); color.rgb += (n - 0.5) * uStrength; gl_FragColor = color;"],
-  ['TiltShiftFilter', 'tilt-shift', { blur: 8, gradientBlur: 600, startX: 0, startY: 0.35, endX: 1, endY: 0.65 }, [['blur', 'number', 0, 30], ['gradientBlur', 'number', 0, 1000], ['startY', 'number', 0, 1], ['endY', 'number', 0, 1]], "float mask = smoothstep(uStartY, uEndY, uv.y); mask = abs(mask - 0.5) * 2.0; vec2 o = vec2(uBlur * mask) / max(uResolution, vec2(1.0)); gl_FragColor = (readInput(uv) + readInput(uv + o) + readInput(uv - o)) / 3.0;"],
+  ['TiltShiftFilter', 'tilt-shift', { blur: 100, gradientBlur: 600, startX: 0, startY: 0.5, endX: 1, endY: 0.5 }, [['blur', 'number', 0, 200], ['gradientBlur', 'number', 0, 1000], ['startX', 'number', 0, 1], ['startY', 'number', 0, 1], ['endX', 'number', 0, 1], ['endY', 'number', 0, 1]], "vec2 safeResolution = max(uResolution, vec2(1.0)); vec2 start = vec2(uStartX, uStartY) * safeResolution; vec2 end = vec2(uEndX, uEndY) * safeResolution; vec2 axis = end - start; float axisLength = max(length(axis), 0.0001); vec2 lineDir = axis / axisLength; vec2 normal = vec2(-lineDir.y, lineDir.x); float distanceFromLine = abs(dot(uv * safeResolution - start, normal)); float radius = smoothstep(0.0, 1.0, distanceFromLine / max(uGradientBlur, 0.0001)) * uBlur; if (radius < 0.01) { gl_FragColor = color; return; } vec4 sum = vec4(0.0); float total = 0.0; for (int x = -8; x <= 8; x++) { float px = float(x) / 8.0; float wx = 1.0 - abs(px); for (int y = -8; y <= 8; y++) { float py = float(y) / 8.0; float wy = 1.0 - abs(py); float weight = wx * wy; vec2 offset = (lineDir * px + normal * py) * radius / safeResolution; vec4 sampleColor = readInput(clamp(uv + offset, vec2(0.0), vec2(1.0))); sampleColor.rgb *= sampleColor.a; sum += sampleColor * weight; total += weight; }} vec4 result = sum / max(total, 0.0001); result.rgb /= result.a + 0.00001; gl_FragColor = result;"],
   ['TwistFilter', 'twist', { radius: 200, angle: 4, offsetX: 0.5, offsetY: 0.5 }, [['radius', 'number', 1, 500], ['angle', 'number', -10, 10], ['offsetX', 'number', 0, 1], ['offsetY', 'number', 0, 1]], "vec2 c = vec2(uOffsetX, uOffsetY); vec2 d = uv - c; float dist = length(d * uResolution); float pct = clamp(1.0 - dist / max(uRadius, 1.0), 0.0, 1.0); float a = pct * pct * uAngle; vec2 r = vec2(d.x*cos(a)-d.y*sin(a), d.x*sin(a)+d.y*cos(a)); gl_FragColor = readInput(c + r);"],
   ['ZoomBlurFilter', 'zoom-blur', { strength: 0.1, centerX: 0.5, centerY: 0.5, innerRadius: 0, radius: -1 }, [['strength', 'number', 0, 1], ['centerX', 'number', 0, 1], ['centerY', 'number', 0, 1], ['innerRadius', 'number', 0, 300]], "vec2 c = vec2(uCenterX, uCenterY); vec4 sum = vec4(0.0); for (int i=0; i<9; i++) { float t = float(i) / 8.0; sum += readInput(mix(uv, c, t * uStrength)); } gl_FragColor = sum / 9.0;"],
 ];
 
 const extras = [
   ['AlphaFilter', 'alpha', { alpha: 0.5 }, [['alpha', 'number', 0, 1]], 'color.a *= uAlpha; gl_FragColor = color;'],
-  ['BlurFilter', 'blur', { strength: 8 }, [['strength', 'number', 0, 30]], 'vec2 o = vec2(uStrength) / max(uResolution, vec2(1.0)); gl_FragColor = (readInput(uv) + readInput(uv+vec2(o.x,0.0)) + readInput(uv-vec2(o.x,0.0)) + readInput(uv+vec2(0.0,o.y)) + readInput(uv-vec2(0.0,o.y))) / 5.0;'],
+  ['BlurFilter', 'blur', { blur: 8, quality: 4 }, [['blur', 'number', 0, 100], ['quality', 'number', 1, 10]], 'float quality = clamp(floor(uQuality + 0.5), 1.0, 10.0); if (uBlur <= 0.0) { gl_FragColor = color; return; } vec4 sum = vec4(0.0); float total = 0.0; vec2 safeResolution = max(uResolution, vec2(1.0)); for (int x = -10; x <= 10; x++) { float fx = float(x); if (abs(fx) <= quality) { float px = fx / quality; float wx = exp(-px * px * 3.5); for (int y = -10; y <= 10; y++) { float fy = float(y); if (abs(fy) <= quality) { float py = fy / quality; float wy = exp(-py * py * 3.5); float weight = wx * wy; vec2 offset = vec2(px, py) * uBlur / safeResolution; vec4 sampleColor = readInput(clamp(uv + offset, vec2(0.0), vec2(1.0))); sampleColor.rgb *= sampleColor.a; sum += sampleColor * weight; total += weight; } }} } vec4 result = sum / max(total, 0.0001); result.rgb /= result.a + 0.00001; gl_FragColor = result;'],
   ['ColorMatrixFilter', 'color-matrix', { saturation: 0.5, brightness: 1, contrast: 1 }, [['saturation', 'number', 0, 2], ['brightness', 'number', 0, 2], ['contrast', 'number', 0, 2]], 'float gray = luma(color.rgb); color.rgb = mix(vec3(gray), color.rgb, uSaturation); color.rgb = ((color.rgb - 0.5) * uContrast + 0.5) * uBrightness; gl_FragColor = color;'],
   ['DisplacementFilter', 'displacement', { scaleX: 50, scaleY: 50, textureKey: 'map' }, [['scaleX', 'number', 1, 200], ['scaleY', 'number', 1, 200]], 'vec2 map = texture2D(uDisplacementSampler, uv).rg - vec2(0.5); vec2 offset = map * vec2(uScaleX, uScaleY) / max(uResolution, vec2(1.0)); gl_FragColor = readInput(uv + offset);'],
   ['NoiseFilter', 'noise', { noise: 0.35, seed: 0 }, [['noise', 'number', 0, 1], ['seed', 'number', 0, 100]], 'float n = fract(sin(dot(uv * uResolution + uSeed + uTime, vec2(12.9898,78.233))) * 43758.5453); color.rgb += (n - 0.5) * uNoise; gl_FragColor = color;'],
@@ -135,6 +135,43 @@ const optionTypeForValue = (key, value) => {
 };
 
 const declarationsForFilter = (className, defaults) => {
+  const godrayNoise = `float godrayHash(vec3 p) {
+  p = fract(p * 0.3183099 + vec3(0.1, 0.2, 0.3));
+  p *= 17.0;
+  return fract(p.x * p.y * p.z * (p.x + p.y + p.z));
+}
+float godrayNoise(vec3 p) {
+  vec3 i = floor(p);
+  vec3 f = fract(p);
+  f = f * f * (3.0 - 2.0 * f);
+  float n000 = godrayHash(i + vec3(0.0, 0.0, 0.0));
+  float n100 = godrayHash(i + vec3(1.0, 0.0, 0.0));
+  float n010 = godrayHash(i + vec3(0.0, 1.0, 0.0));
+  float n110 = godrayHash(i + vec3(1.0, 1.0, 0.0));
+  float n001 = godrayHash(i + vec3(0.0, 0.0, 1.0));
+  float n101 = godrayHash(i + vec3(1.0, 0.0, 1.0));
+  float n011 = godrayHash(i + vec3(0.0, 1.0, 1.0));
+  float n111 = godrayHash(i + vec3(1.0, 1.0, 1.0));
+  float nx00 = mix(n000, n100, f.x);
+  float nx10 = mix(n010, n110, f.x);
+  float nx01 = mix(n001, n101, f.x);
+  float nx11 = mix(n011, n111, f.x);
+  float nxy0 = mix(nx00, nx10, f.y);
+  float nxy1 = mix(nx01, nx11, f.y);
+  return mix(nxy0, nxy1, f.z);
+}
+float godrayTurb(vec3 p, float lacunarity, float gain) {
+  float sum = 0.0;
+  float scale = 1.0;
+  float amplitude = 1.0;
+  for (int i = 0; i < 6; i++) {
+    sum += amplitude * (godrayNoise(p * scale) * 2.0 - 1.0);
+    scale *= lacunarity;
+    amplitude *= gain;
+  }
+  return abs(sum);
+}`;
+
   if (className === 'ColorGradientFilter') {
     return `${uniformDeclarations(defaults)}
 uniform float uStopCount;
@@ -148,6 +185,11 @@ uniform float uStop${index}Alpha;`).join('\n')}`;
   if (className === 'DisplacementFilter') {
     return `${uniformDeclarations(defaults)}
 uniform sampler2D uDisplacementSampler;`;
+  }
+
+  if (className === 'GodrayFilter') {
+    return `${uniformDeclarations(defaults)}
+${godrayNoise}`;
   }
 
   return uniformDeclarations(defaults);
