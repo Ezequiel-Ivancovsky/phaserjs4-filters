@@ -25,8 +25,9 @@ export type PhaserFilterTarget = Phaser.GameObjects.GameObject & {
 export interface FilterMetadata {
   id: string;
   displayName: string;
-  source: 'pixi-source' | 'demo-extra';
+  source: 'pixi-source' | 'demo-extra' | 'custom';
   fishOnly?: boolean;
+  crystalOnly?: boolean;
   defaults: Record<string, FilterUniformValue>;
   controls: FilterControl[];
 }

@@ -12,11 +12,12 @@ describe('filter metadata', () => {
         .filter((file) => file.endsWith('Filter.ts'))
         .map((file) => readFileSync(resolve('src/filters', entry.name, file), 'utf8')));
 
-    expect(filterSources).toHaveLength(42);
+    expect(filterSources).toHaveLength(43);
     expect(filterSources.some((source) => source.includes("id: 'AdjustmentFilter'"))).toBe(true);
     expect(filterSources.some((source) => source.includes('"brightness":1'))).toBe(true);
     expect(filterSources.some((source) => source.includes("id: 'NoiseFilter'"))).toBe(true);
     expect(filterSources.some((source) => source.includes("source: 'demo-extra'"))).toBe(true);
+    expect(filterSources.some((source) => source.includes("id: 'CrystalDisplacementFilter'"))).toBe(true);
   });
 
   it('keeps OldFilm controls aligned with the Pixi demo', () => {

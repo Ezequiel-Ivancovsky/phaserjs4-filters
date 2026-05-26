@@ -18,6 +18,10 @@ interface Fish extends Phaser.GameObjects.Image {
   activeFilters: BaseFilterController[];
 }
 
+interface Crystal extends Phaser.GameObjects.Image {
+  activeFilters: BaseFilterController[];
+}
+
 const ASSET_BASE = '/assets/';
 const FISH_COUNT = 20;
 const FISH_VARIATIONS = 5;
@@ -33,6 +37,8 @@ class DemoScene extends Phaser.Scene {
   private pond!: Phaser.GameObjects.Container;
   private background!: Phaser.GameObjects.Image;
   private overlay!: Phaser.GameObjects.TileSprite;
+  private captureFrame!: Phaser.GameObjects.CaptureFrame;
+  private crystal!: Crystal;
   private fish: Fish[] = [];
   private pondFilters: BaseFilterController[] = [];
   private filterState = new Map<string, BaseFilterController[]>();
@@ -55,6 +61,8 @@ class DemoScene extends Phaser.Scene {
     this.load.image('map', `${ASSET_BASE}displacement_map.png`);
     this.load.image('lightmap', `${ASSET_BASE}lightmap.png`);
     this.load.image('colormap', `${ASSET_BASE}colormap.png`);
+    this.load.image('crystal', `${ASSET_BASE}crystal_glass_reference.png`);
+    this.load.image('crystalDisplacementMap', `${ASSET_BASE}crystal_displacement_green_to_red_rgba.png`);
 
     for (let index = 1; index <= FISH_VARIATIONS; index += 1) {
       this.load.image(`fish${index}`, `${ASSET_BASE}displacement_fish${index}.png`);
@@ -63,6 +71,7 @@ class DemoScene extends Phaser.Scene {
 
   create(): void {
     registerPhaserFilters(this);
+    this.cameras.main.setForceComposite(true);
 
     this.gui = new GUI({ title: 'Phaser 4 Filters' });
     const demoSettings = {
@@ -108,6 +117,14 @@ class DemoScene extends Phaser.Scene {
 
     this.overlay = this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'overlay').setOrigin(0);
     this.pond.add(this.overlay);
+
+    this.captureFrame = this.add.captureFrame('capture');
+
+    this.crystal = this.add.image(0, 0, 'crystal') as Crystal;
+    this.crystal.setOrigin(0.5);
+    this.crystal.enableFilters();
+    this.crystal.activeFilters = [];
+    this.crystal.setVisible(false);
 
     this.status = document.createElement('div');
     this.status.className = 'demo-status';
@@ -237,6 +254,7 @@ class DemoScene extends Phaser.Scene {
     this.background.x = (width - this.background.displayWidth) / 2;
     this.background.y = (height - this.background.displayHeight) / 2;
     this.overlay.setSize(width, height);
+    this.positionCrystal(width, height);
 
     for (const fish of this.fish) {
       if (fish.x === 0 && fish.y === 0) {
@@ -244,6 +262,14 @@ class DemoScene extends Phaser.Scene {
         fish.y = Math.random() * height;
       }
     }
+  }
+
+  private positionCrystal(width: number, height: number): void {
+    const maxSize = Math.min(width, height) * 0.56;
+    const size = Phaser.Math.Clamp(maxSize, 220, 520);
+
+    this.crystal.setDisplaySize(size, size);
+    this.crystal.setPosition(width * 0.5, height * 0.53);
   }
 
   private createFilterGui(): void {
@@ -288,6 +314,8 @@ class DemoScene extends Phaser.Scene {
             defaults[control.key] = value;
             this.refreshFilter(metadata);
           });
+        } else if (control.type === 'select') {
+          folder.add(defaults, control.key, control.options ?? []).name(control.key).onChange(() => this.refreshFilter(metadata));
         } else {
           folder.add(defaults, control.key, control.min, control.max, Number(('step' in control ? control.step : undefined) ?? 0.01))
             .name(control.key)
@@ -392,7 +420,15 @@ class DemoScene extends Phaser.Scene {
     ) => BaseFilterController;
     const controllers: BaseFilterController[] = [];
 
-    if (metadata.fishOnly) {
+    if (metadata.crystalOnly) {
+      this.crystal.setVisible(true);
+
+      const controller = addFilter(this.crystal, { ...metadata.defaults }, 'internal');
+
+      controller.enabled = true;
+      this.crystal.activeFilters.push(controller);
+      controllers.push(controller);
+    } else if (metadata.fishOnly) {
       for (const fish of this.fish) {
         const controller = addFilter(fish, { ...metadata.defaults }, 'internal');
         controller.enabled = true;
@@ -420,6 +456,12 @@ class DemoScene extends Phaser.Scene {
 
       this.removeControllerFromFilterLists(this.pond, controller);
       this.pondFilters = this.pondFilters.filter((item) => item !== controller);
+      this.removeControllerFromFilterLists(this.crystal, controller);
+      this.crystal.activeFilters = this.crystal.activeFilters.filter((item) => item !== controller);
+    }
+
+    if (this.crystal.activeFilters.length === 0) {
+      this.crystal.setVisible(false);
     }
   }
 

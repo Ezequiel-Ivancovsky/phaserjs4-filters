@@ -52,7 +52,7 @@ The demo recreates the PixiJS Filters fish pond demo with Phaser 4. It includes:
 
 ## Usage
 
-Register render nodes once in a scene, then add controllers to a game object or camera-like target.
+Register render nodes once in a scene, then add controllers to a game object, container, or camera-like target. The root export re-exports every generated filter, helper, metadata object, and shared runtime utility.
 
 ```ts
 import {
@@ -76,7 +76,27 @@ class DemoScene extends Phaser.Scene {
 }
 ```
 
-Filter classes and helpers are exported from `src/index.ts`.
+When using the library source directly inside this repo, import from `./src`. Once this project is packaged, the same exports are intended to come from `phaserjs-filters`:
+
+```ts
+import { addGlowFilter, registerPhaserFilters } from 'phaserjs-filters';
+```
+
+Each filter also has its own folder export after the refactor:
+
+```ts
+import {
+  GlowFilter,
+  PhaserGlowFilter,
+  addGlowFilter,
+} from './src/filters/glow';
+```
+
+The naming convention is:
+
+- `GlowFilter`: Phaser filter controller, used by scenes and helpers.
+- `PhaserGlowFilter`: WebGL render node registered with Phaser's render-node manager.
+- `addGlowFilter(target, options, space)`: convenience helper that enables filters on the target and adds the controller to `internal` or `external` filter space.
 
 ## Filters
 
@@ -133,6 +153,12 @@ These compatibility filters are included for the demo because the original PixiJ
 | `ColorMatrixFilter` |
 | `DisplacementFilter` |
 | `NoiseFilter` |
+
+## Custom Filters
+
+| Filter | Description |
+|--------|-------------|
+| `CrystalDisplacementFilter` | Phaser-only capture-frame refraction filter that uses a crystal image plus a red/green displacement map to distort the scene behind the crystal. |
 
 ## Project Structure
 
