@@ -38,8 +38,11 @@ class DemoScene extends Phaser.Scene {
   private filterState = new Map<string, BaseFilterController[]>();
   private animating = true;
   private rendering = true;
+  private showFps = false;
   private timer = 0;
+  private fpsUpdateTimer = 0;
   private status!: HTMLDivElement;
+  private fpsCounter!: HTMLDivElement;
   private enabledFromQuery = getEnabledFilters();
 
   constructor() {
@@ -65,6 +68,7 @@ class DemoScene extends Phaser.Scene {
     const demoSettings = {
       rendering: this.rendering,
       animating: this.animating,
+      showFps: this.showFps,
     };
 
     this.gui.add(demoSettings, 'rendering').name('Rendering').onChange((value: boolean) => {
@@ -77,6 +81,10 @@ class DemoScene extends Phaser.Scene {
     });
     this.gui.add(demoSettings, 'animating').name('Animating').onChange((value: boolean) => {
       this.animating = value;
+    });
+    this.gui.add(demoSettings, 'showFps').name('FPS Counter').onChange((value: boolean) => {
+      this.showFps = value;
+      this.fpsCounter.hidden = !value;
     });
 
     this.pond = this.add.container(0, 0);
@@ -105,6 +113,12 @@ class DemoScene extends Phaser.Scene {
     this.status.className = 'demo-status';
     document.body.appendChild(this.status);
 
+    this.fpsCounter = document.createElement('div');
+    this.fpsCounter.className = 'demo-fps';
+    this.fpsCounter.hidden = !this.showFps;
+    this.fpsCounter.textContent = 'FPS: --';
+    document.body.appendChild(this.fpsCounter);
+
     this.scale.on('resize', this.resize, this);
     this.resize();
     this.createFilterGui();
@@ -115,12 +129,24 @@ class DemoScene extends Phaser.Scene {
 
   override update(_time: number, delta: number): void {
     this.timer += delta / 16.6667;
+    this.updateFpsCounter(delta);
 
     for (const controllers of this.filterState.values()) {
       for (const controller of controllers) {
         if (controller.metadata.id === 'ShockwaveFilter') {
           if (controller.uniforms.animating !== false) {
             const time = (Number(controller.uniforms.time ?? 0) + delta / 1000) % 2.5;
+
+            controller.uniforms.time = time;
+            (controller as unknown as { time: number }).time = time;
+          }
+
+          continue;
+        }
+
+        if (controller.metadata.id === 'ReflectionFilter') {
+          if (controller.uniforms.animating !== false) {
+            const time = Number(controller.uniforms.time ?? 0) + delta / 166.667;
 
             controller.uniforms.time = time;
             (controller as unknown as { time: number }).time = time;
@@ -165,6 +191,21 @@ class DemoScene extends Phaser.Scene {
       if (fish.y < -padding) fish.y += height + padding * 2;
       if (fish.y > height + padding) fish.y -= height + padding * 2;
     }
+  }
+
+  private updateFpsCounter(delta: number): void {
+    if (!this.showFps) {
+      return;
+    }
+
+    this.fpsUpdateTimer += delta;
+
+    if (this.fpsUpdateTimer < 250) {
+      return;
+    }
+
+    this.fpsUpdateTimer = 0;
+    this.fpsCounter.textContent = `FPS: ${Math.round(this.game.loop.actualFps)}`;
   }
 
   private resize(): void {

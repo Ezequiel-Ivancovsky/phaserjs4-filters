@@ -32,6 +32,26 @@ canvas {
   pointer-events: none;
 }
 
+.demo-fps {
+  position: fixed;
+  left: 16px;
+  top: 16px;
+  z-index: 5;
+  min-width: 68px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: rgb(0 0 0 / 0.52);
+  color: #ffffff;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  pointer-events: none;
+}
+
+.demo-fps[hidden] {
+  display: none;
+}
+
 .lil-gui.root {
   --width: min(360px, calc(100vw - 24px));
   max-height: calc(100vh - 24px);
