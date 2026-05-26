@@ -374,18 +374,22 @@ class DemoScene extends Phaser.Scene {
       return;
     }
 
-    const addFilter = FILTER_ADDERS[metadata.id as keyof typeof FILTER_ADDERS];
+    const addFilter = FILTER_ADDERS[metadata.id as keyof typeof FILTER_ADDERS] as (
+      target: Phaser.GameObjects.GameObject | Phaser.Cameras.Scene2D.Camera,
+      options: Record<string, unknown>,
+      space: 'internal' | 'external',
+    ) => BaseFilterController;
     const controllers: BaseFilterController[] = [];
 
     if (metadata.fishOnly) {
       for (const fish of this.fish) {
-        const controller = addFilter(fish as unknown as Parameters<typeof addFilter>[0], { ...metadata.defaults }, 'internal') as BaseFilterController;
+        const controller = addFilter(fish, { ...metadata.defaults }, 'internal');
         controller.enabled = true;
         fish.activeFilters.push(controller);
         controllers.push(controller);
       }
     } else {
-      const controller = addFilter(this.pond as unknown as Parameters<typeof addFilter>[0], { ...metadata.defaults }, 'external') as BaseFilterController;
+      const controller = addFilter(this.pond, { ...metadata.defaults }, 'external');
       controller.enabled = true;
       this.pondFilters.push(controller);
       controllers.push(controller);

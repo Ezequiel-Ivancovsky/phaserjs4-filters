@@ -47,6 +47,13 @@ export type FilterControllerConstructor<T extends BaseFilterController = BaseFil
 
 export { hexToRgb, normalizeColor };
 
+type Manager = Phaser.Renderer.WebGL.RenderNodes.RenderNodeManager;
+type DrawingContext = Phaser.Renderer.WebGL.DrawingContext;
+
+const setUniformValue = (programManager: Phaser.Renderer.WebGL.ProgramManager, name: string, value: unknown): void => {
+  programManager.setUniform(name, value);
+};
+
 export class BaseFilterController extends Phaser.Filters.Controller {
   readonly metadata: FilterMetadata;
   readonly uniforms: Record<string, FilterUniformValue>;
@@ -96,6 +103,74 @@ export class BaseFilterController extends Phaser.Filters.Controller {
     }
 
     return super.getPadding();
+  }
+}
+
+export class GeneratedFilterNode extends Phaser.Renderer.WebGL.RenderNodes.BaseFilterShader {
+  readonly metadata: FilterMetadata;
+
+  constructor(name: string, manager: Manager, metadata: FilterMetadata, fragmentSource: string) {
+    super(name, manager, undefined, fragmentSource);
+    this.metadata = metadata;
+  }
+
+  setupUniforms(controller: BaseFilterController, drawingContext: DrawingContext): void {
+    controller.syncUniforms();
+    const programManager = this.programManager;
+    setUniformValue(programManager, 'uMainSampler', 0);
+    setUniformValue(programManager, 'uResolution', [drawingContext.width || 1, drawingContext.height || 1]);
+    setUniformValue(programManager, 'uTime', controller.uniforms.time ?? performance.now() / 16.6667);
+    setUniformValue(programManager, 'uDisplacementSampler', 1);
+
+    if (controller.metadata.id === 'ColorGradientFilter') {
+      const rawStops = Array.isArray(controller.uniforms.stops) ? controller.uniforms.stops : [];
+      const stops = rawStops
+        .map((stop) => stop as { offset?: number; color?: unknown; alpha?: number })
+        .sort((a, b) => (a.offset ?? 0) - (b.offset ?? 0))
+        .slice(0, 16);
+      const stopCount = Math.max(2, stops.length);
+
+      for (let index = 0; index < 16; index += 1) {
+        const stop = stops[index] ?? stops[stops.length - 1] ?? { offset: index, color: 0xffffff, alpha: 1 };
+        const [r, g, b] = hexToRgb(stop.color ?? 0xffffff);
+        setUniformValue(programManager, `uStop${index}R`, r);
+        setUniformValue(programManager, `uStop${index}G`, g);
+        setUniformValue(programManager, `uStop${index}B`, b);
+        setUniformValue(programManager, `uStop${index}Offset`, typeof stop.offset === 'number' ? stop.offset : index);
+        setUniformValue(programManager, `uStop${index}Alpha`, typeof stop.alpha === 'number' ? stop.alpha : 1);
+      }
+
+      setUniformValue(programManager, 'uStopCount', stopCount);
+    }
+
+    for (const [key, value] of Object.entries(controller.uniforms)) {
+      if (key === 'time' || key === 'resolution' || key === 'stops' || key === 'textureKey') {
+        continue;
+      }
+
+      if (key !== 'maxColors' && key.toLowerCase().includes('color')) {
+        const [r, g, b] = hexToRgb(value);
+        const base = key[0].toUpperCase() + key.slice(1);
+        setUniformValue(programManager, `u${base}R`, r);
+        setUniformValue(programManager, `u${base}G`, g);
+        setUniformValue(programManager, `u${base}B`, b);
+      } else if (typeof value === 'boolean') {
+        setUniformValue(programManager, `u${key[0].toUpperCase()}${key.slice(1)}`, value ? 1 : 0);
+      } else if (typeof value === 'number') {
+        setUniformValue(programManager, `u${key[0].toUpperCase()}${key.slice(1)}`, value);
+      }
+    }
+  }
+
+  setupTextures(controller: BaseFilterController, textures: unknown[]): void {
+    if (controller.metadata.id !== 'DisplacementFilter') {
+      return;
+    }
+
+    const textureKey = typeof controller.uniforms.textureKey === 'string' ? controller.uniforms.textureKey : 'map';
+    const frame = controller.camera?.scene?.sys.textures.getFrame(textureKey);
+
+    textures[1] = frame?.glTexture ?? textures[0];
   }
 }
 

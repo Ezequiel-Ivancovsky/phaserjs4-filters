@@ -1,4 +1,4 @@
-export const PHASER_FILTER_HEADER = `
+
 precision mediump float;
 
 uniform sampler2D uMainSampler;
@@ -13,13 +13,13 @@ vec4 readInput(vec2 uv) {
 float luma(vec3 color) {
   return dot(color, vec3(0.299, 0.587, 0.114));
 }
-`;
 
-export const makeFragment = (body: string, declarations = ''): string => `${PHASER_FILTER_HEADER}
-${declarations}
+uniform float uColorR;
+uniform float uColorG;
+uniform float uColorB;
+uniform float uAlpha;
 void main(void) {
   vec2 uv = outTexCoord;
   vec4 color = readInput(uv);
-  ${body}
+  color.rgb = mix(color.rgb, vec3(uColorR, uColorG, uColorB), uAlpha); gl_FragColor = color;
 }
-`;

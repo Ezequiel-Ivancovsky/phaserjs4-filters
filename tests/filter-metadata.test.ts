@@ -1,27 +1,32 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { hexToRgb, normalizeColor } from '../src/filters/color';
 
 describe('filter metadata', () => {
   it('exports all source filters and demo extras', () => {
-    const generated = readFileSync(resolve('src/filters/generated.ts'), 'utf8');
+    const filterDirs = readdirSync(resolve('src/filters'), { withFileTypes: true })
+      .filter((entry) => entry.isDirectory());
+    const filterSources = filterDirs
+      .flatMap((entry) => readdirSync(resolve('src/filters', entry.name))
+        .filter((file) => file.endsWith('Filter.ts'))
+        .map((file) => readFileSync(resolve('src/filters', entry.name, file), 'utf8')));
 
-    expect((generated.match(/id: '/g) ?? []).length).toBe(42);
-    expect(generated).toContain("id: 'AdjustmentFilter'");
-    expect(generated).toContain('"brightness":1');
-    expect(generated).toContain("id: 'NoiseFilter'");
-    expect(generated).toContain("source: 'demo-extra'");
+    expect(filterSources).toHaveLength(42);
+    expect(filterSources.some((source) => source.includes("id: 'AdjustmentFilter'"))).toBe(true);
+    expect(filterSources.some((source) => source.includes('"brightness":1'))).toBe(true);
+    expect(filterSources.some((source) => source.includes("id: 'NoiseFilter'"))).toBe(true);
+    expect(filterSources.some((source) => source.includes("source: 'demo-extra'"))).toBe(true);
   });
 
   it('keeps OldFilm controls aligned with the Pixi demo', () => {
-    const generated = readFileSync(resolve('src/filters/generated.ts'), 'utf8');
+    const source = readFileSync(resolve('src/filters/old-film/OldFilmFilter.ts'), 'utf8');
 
-    expect(generated).toContain('"noiseSize":1');
-    expect(generated).toContain('"scratchDensity":0.3');
-    expect(generated).toContain('"scratchWidth":1');
-    expect(generated).toContain('"vignettingAlpha":1');
-    expect(generated).toContain('"vignettingBlur":0.3');
+    expect(source).toContain('"noiseSize":1');
+    expect(source).toContain('"scratchDensity":0.3');
+    expect(source).toContain('"scratchWidth":1');
+    expect(source).toContain('"vignettingAlpha":1');
+    expect(source).toContain('"vignettingBlur":0.3');
   });
 
   it('normalizes colors for shader uniforms and GUI controls', () => {

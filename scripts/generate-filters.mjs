@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = dirname(fileURLToPath(import.meta.url));
 const out = resolve(root, '../src/filters/generated.ts');
+const filtersOut = resolve(root, '../src/filters');
 const colorGradientBody = "const float PI2 = 6.2831853076; vec2 centered = uv - vec2(0.5); float position = uv.y; if (uType < 0.5) { float a = radians(uAngle - 90.0); vec2 d = vec2(cos(a), sin(a)); position = clamp(dot(centered, d) + 0.5, 0.0, 1.0); } else if (uType < 1.5) { position = clamp(distance(uv, vec2(0.5)) * 2.0, 0.0, 1.0); } else { position = mod(atan(-centered.y, centered.x) + radians(uAngle), PI2) / PI2; } if (uMaxColors > 0.0) { float stepSize = 1.0 / uMaxColors; position = stepSize * (floor(position / stepSize) + 0.5); } float lastOffset = uStop0Offset; if (uStopCount > 1.5) lastOffset = uStop1Offset; if (uStopCount > 2.5) lastOffset = uStop2Offset; if (uStopCount > 3.5) lastOffset = uStop3Offset; if (uStopCount > 4.5) lastOffset = uStop4Offset; if (uStopCount > 5.5) lastOffset = uStop5Offset; if (uStopCount > 6.5) lastOffset = uStop6Offset; if (uStopCount > 7.5) lastOffset = uStop7Offset; if (uStopCount > 8.5) lastOffset = uStop8Offset; if (uStopCount > 9.5) lastOffset = uStop9Offset; if (uStopCount > 10.5) lastOffset = uStop10Offset; if (uStopCount > 11.5) lastOffset = uStop11Offset; if (uStopCount > 12.5) lastOffset = uStop12Offset; if (uStopCount > 13.5) lastOffset = uStop13Offset; if (uStopCount > 14.5) lastOffset = uStop14Offset; if (uStopCount > 15.5) lastOffset = uStop15Offset; if (position < uStop0Offset || position > lastOffset) { gl_FragColor = color; } else { vec4 fromColor = vec4(vec3(uStop0R, uStop0G, uStop0B) * uStop0Alpha, uStop0Alpha); vec4 toColor = vec4(vec3(uStop1R, uStop1G, uStop1B) * uStop1Alpha, uStop1Alpha); float fromOffset = uStop0Offset; float toOffset = uStop1Offset; if (uStopCount > 2.5 && position >= uStop1Offset && position <= uStop2Offset) { fromColor = vec4(vec3(uStop1R, uStop1G, uStop1B) * uStop1Alpha, uStop1Alpha); toColor = vec4(vec3(uStop2R, uStop2G, uStop2B) * uStop2Alpha, uStop2Alpha); fromOffset = uStop1Offset; toOffset = uStop2Offset; } if (uStopCount > 3.5 && position >= uStop2Offset && position <= uStop3Offset) { fromColor = vec4(vec3(uStop2R, uStop2G, uStop2B) * uStop2Alpha, uStop2Alpha); toColor = vec4(vec3(uStop3R, uStop3G, uStop3B) * uStop3Alpha, uStop3Alpha); fromOffset = uStop2Offset; toOffset = uStop3Offset; } if (uStopCount > 4.5 && position >= uStop3Offset && position <= uStop4Offset) { fromColor = vec4(vec3(uStop3R, uStop3G, uStop3B) * uStop3Alpha, uStop3Alpha); toColor = vec4(vec3(uStop4R, uStop4G, uStop4B) * uStop4Alpha, uStop4Alpha); fromOffset = uStop3Offset; toOffset = uStop4Offset; } if (uStopCount > 5.5 && position >= uStop4Offset && position <= uStop5Offset) { fromColor = vec4(vec3(uStop4R, uStop4G, uStop4B) * uStop4Alpha, uStop4Alpha); toColor = vec4(vec3(uStop5R, uStop5G, uStop5B) * uStop5Alpha, uStop5Alpha); fromOffset = uStop4Offset; toOffset = uStop5Offset; } if (uStopCount > 6.5 && position >= uStop5Offset && position <= uStop6Offset) { fromColor = vec4(vec3(uStop5R, uStop5G, uStop5B) * uStop5Alpha, uStop5Alpha); toColor = vec4(vec3(uStop6R, uStop6G, uStop6B) * uStop6Alpha, uStop6Alpha); fromOffset = uStop5Offset; toOffset = uStop6Offset; } if (uStopCount > 7.5 && position >= uStop6Offset && position <= uStop7Offset) { fromColor = vec4(vec3(uStop6R, uStop6G, uStop6B) * uStop6Alpha, uStop6Alpha); toColor = vec4(vec3(uStop7R, uStop7G, uStop7B) * uStop7Alpha, uStop7Alpha); fromOffset = uStop6Offset; toOffset = uStop7Offset; } if (uStopCount > 8.5 && position >= uStop7Offset && position <= uStop8Offset) { fromColor = vec4(vec3(uStop7R, uStop7G, uStop7B) * uStop7Alpha, uStop7Alpha); toColor = vec4(vec3(uStop8R, uStop8G, uStop8B) * uStop8Alpha, uStop8Alpha); fromOffset = uStop7Offset; toOffset = uStop8Offset; } if (uStopCount > 9.5 && position >= uStop8Offset && position <= uStop9Offset) { fromColor = vec4(vec3(uStop8R, uStop8G, uStop8B) * uStop8Alpha, uStop8Alpha); toColor = vec4(vec3(uStop9R, uStop9G, uStop9B) * uStop9Alpha, uStop9Alpha); fromOffset = uStop8Offset; toOffset = uStop9Offset; } if (uStopCount > 10.5 && position >= uStop9Offset && position <= uStop10Offset) { fromColor = vec4(vec3(uStop9R, uStop9G, uStop9B) * uStop9Alpha, uStop9Alpha); toColor = vec4(vec3(uStop10R, uStop10G, uStop10B) * uStop10Alpha, uStop10Alpha); fromOffset = uStop9Offset; toOffset = uStop10Offset; } if (uStopCount > 11.5 && position >= uStop10Offset && position <= uStop11Offset) { fromColor = vec4(vec3(uStop10R, uStop10G, uStop10B) * uStop10Alpha, uStop10Alpha); toColor = vec4(vec3(uStop11R, uStop11G, uStop11B) * uStop11Alpha, uStop11Alpha); fromOffset = uStop10Offset; toOffset = uStop11Offset; } if (uStopCount > 12.5 && position >= uStop11Offset && position <= uStop12Offset) { fromColor = vec4(vec3(uStop11R, uStop11G, uStop11B) * uStop11Alpha, uStop11Alpha); toColor = vec4(vec3(uStop12R, uStop12G, uStop12B) * uStop12Alpha, uStop12Alpha); fromOffset = uStop11Offset; toOffset = uStop12Offset; } if (uStopCount > 13.5 && position >= uStop12Offset && position <= uStop13Offset) { fromColor = vec4(vec3(uStop12R, uStop12G, uStop12B) * uStop12Alpha, uStop12Alpha); toColor = vec4(vec3(uStop13R, uStop13G, uStop13B) * uStop13Alpha, uStop13Alpha); fromOffset = uStop12Offset; toOffset = uStop13Offset; } if (uStopCount > 14.5 && position >= uStop13Offset && position <= uStop14Offset) { fromColor = vec4(vec3(uStop13R, uStop13G, uStop13B) * uStop13Alpha, uStop13Alpha); toColor = vec4(vec3(uStop14R, uStop14G, uStop14B) * uStop14Alpha, uStop14Alpha); fromOffset = uStop13Offset; toOffset = uStop14Offset; } if (uStopCount > 15.5 && position >= uStop14Offset && position <= uStop15Offset) { fromColor = vec4(vec3(uStop14R, uStop14G, uStop14B) * uStop14Alpha, uStop14Alpha); toColor = vec4(vec3(uStop15R, uStop15G, uStop15B) * uStop15Alpha, uStop15Alpha); fromOffset = uStop14Offset; toOffset = uStop15Offset; } float pct = clamp((position - fromOffset) / max(toOffset - fromOffset, 0.0001), 0.0, 1.0); vec4 gradient = mix(fromColor, toColor, pct) * uAlpha * color.a; gl_FragColor = uReplace > 0.5 ? gradient : gradient + color * (1.0 - gradient.a); }";
 
 const pixiFilters = [
@@ -77,143 +78,152 @@ const uniformDeclarations = (defaults) => Object.keys(defaults).flatMap((key) =>
   return [`uniform float ${upperUniform(key)};`];
 }).join('\n');
 
-const source = `/* eslint-disable max-classes-per-file */
-import Phaser from 'phaser';
-import { addControllerToTarget, BaseFilterController, FilterMetadata, FilterSpace, hexToRgb, normalizeColor, PhaserFilterTarget } from './runtime';
-import { makeFragment } from './shaders';
+const phaserFilterHeader = `
+precision mediump float;
 
-type Manager = Phaser.Renderer.WebGL.RenderNodes.RenderNodeManager;
-type DrawingContext = Phaser.Renderer.WebGL.DrawingContext;
+uniform sampler2D uMainSampler;
+uniform vec2 uResolution;
+uniform float uTime;
+varying vec2 outTexCoord;
 
-const FILTER_BODIES = {
-${all.map(([className, slug, defaults, controls, body]) => `  ${className}: ${JSON.stringify(body)},`).join('\n')}
-} as const;
+vec4 readInput(vec2 uv) {
+  return texture2D(uMainSampler, uv);
+}
 
-const FILTER_UNIFORMS = {
-${all.map(([className, slug, defaults]) => {
-  const declarations = className === 'ColorGradientFilter'
-    ? `${uniformDeclarations(defaults)}
+float luma(vec3 color) {
+  return dot(color, vec3(0.299, 0.587, 0.114));
+}
+`;
+
+const makeFragment = (body, declarations = '') => `${phaserFilterHeader}
+${declarations}
+void main(void) {
+  vec2 uv = outTexCoord;
+  vec4 color = readInput(uv);
+  ${body}
+}
+`;
+
+const fishOnlyFilters = new Set(['BevelFilter', 'ColorGradientFilter', 'ColorOverlayFilter', 'GlowFilter', 'OutlineFilter', 'DropShadowFilter']);
+const displayName = (slug) => slug.replace(/-/g, ' ').replace(/\b\w/g, (m) => m.toUpperCase());
+const optionTypeForValue = (key, value) => {
+  if (key === 'stops') {
+    return 'Array<{ offset: number; color: number | string | number[]; alpha: number }>';
+  }
+
+  if (key === 'textureKey') {
+    return 'string';
+  }
+
+  if (key !== 'maxColors' && key.toLowerCase().includes('color')) {
+    return 'number | string | number[]';
+  }
+
+  if (typeof value === 'boolean') {
+    return 'boolean';
+  }
+
+  if (typeof value === 'number') {
+    return 'number';
+  }
+
+  if (Array.isArray(value) || value instanceof Float32Array) {
+    return 'number[]';
+  }
+
+  return 'unknown';
+};
+
+const declarationsForFilter = (className, defaults) => {
+  if (className === 'ColorGradientFilter') {
+    return `${uniformDeclarations(defaults)}
 uniform float uStopCount;
 ${Array.from({ length: 16 }, (_, index) => `uniform float uStop${index}R;
 uniform float uStop${index}G;
 uniform float uStop${index}B;
 uniform float uStop${index}Offset;
-uniform float uStop${index}Alpha;`).join('\n')}`
-    : className === 'DisplacementFilter'
-      ? `${uniformDeclarations(defaults)}
-uniform sampler2D uDisplacementSampler;`
-    : uniformDeclarations(defaults);
+uniform float uStop${index}Alpha;`).join('\n')}`;
+  }
 
-  return `  ${className}: ${JSON.stringify(declarations)},`;
-}).join('\n')}
-} as const;
+  if (className === 'DisplacementFilter') {
+    return `${uniformDeclarations(defaults)}
+uniform sampler2D uDisplacementSampler;`;
+  }
 
-export const FILTER_METADATA = ([
-${all.map(([className, slug, defaults, controls, body, source]) => `  {
-    id: '${className}',
-    displayName: '${slug.replace(/-/g, ' ').replace(/\b\w/g, (m) => m.toUpperCase())}',
-    source: '${source}',
-    fishOnly: ${['BevelFilter', 'ColorGradientFilter', 'ColorOverlayFilter', 'GlowFilter', 'OutlineFilter', 'DropShadowFilter'].includes(className) ? 'true' : 'false'},
-    defaults: ${JSON.stringify(defaults)},
-    controls: ${JSON.stringify(controls.map(([key, type, min, max]) => ({ key, type, min, max })))}
-  },`).join('\n')}
-] satisfies FilterMetadata[]).sort((a, b) => a.displayName.localeCompare(b.displayName));
-
-export const FILTER_METADATA_BY_ID = Object.fromEntries(FILTER_METADATA.map((item) => [item.id, item])) as Record<string, FilterMetadata>;
-
-const setUniformValue = (programManager: Phaser.Renderer.WebGL.ProgramManager, name: string, value: unknown): void => {
-  programManager.setUniform(name, value);
+  return uniformDeclarations(defaults);
 };
 
-class GeneratedFilterNode extends Phaser.Renderer.WebGL.RenderNodes.BaseFilterShader {
-  readonly metadata: FilterMetadata;
+const filterModuleSource = (className, slug, defaults, controls, source) => {
+  const nodeName = `Phaser${className}`;
+  const metadataName = `${className}Metadata`;
+  const optionsName = `${className}Options`;
+  const controlsMetadata = controls.map(([key, type, min, max]) => ({ key, type, min, max }));
+  const optionFields = Object.entries(defaults)
+    .map(([key, value]) => `  ${key}?: ${optionTypeForValue(key, value)};`)
+    .join('\n');
 
-  constructor(name: string, manager: Manager, metadata: FilterMetadata, body: string) {
-    super(name, manager, undefined, makeFragment(body, FILTER_UNIFORMS[name.replace('Phaser', '') as keyof typeof FILTER_UNIFORMS]));
-    this.metadata = metadata;
-  }
+  return `import Phaser from 'phaser';
+import fragmentSource from './${slug}.frag?raw';
+import {
+  addControllerToTarget,
+  BaseFilterController,
+  FilterMetadata,
+  FilterSpace,
+  GeneratedFilterNode,
+  PhaserFilterTarget,
+} from '../runtime';
 
-  setupUniforms(controller: BaseFilterController, drawingContext: DrawingContext): void {
-    controller.syncUniforms();
-    const programManager = this.programManager;
-    setUniformValue(programManager, 'uMainSampler', 0);
-    setUniformValue(programManager, 'uResolution', [drawingContext.width || 1, drawingContext.height || 1]);
-    setUniformValue(programManager, 'uTime', controller.uniforms.time ?? performance.now() / 16.6667);
-    setUniformValue(programManager, 'uDisplacementSampler', 1);
+type Manager = Phaser.Renderer.WebGL.RenderNodes.RenderNodeManager;
 
-    if (controller.metadata.id === 'ColorGradientFilter') {
-      const rawStops = Array.isArray(controller.uniforms.stops) ? controller.uniforms.stops : [];
-      const stops = rawStops
-        .map((stop) => stop as { offset?: number; color?: unknown; alpha?: number })
-        .sort((a, b) => (a.offset ?? 0) - (b.offset ?? 0))
-        .slice(0, 16);
-      const stopCount = Math.max(2, stops.length);
-
-      for (let index = 0; index < 16; index += 1) {
-        const stop = stops[index] ?? stops[stops.length - 1] ?? { offset: index, color: 0xffffff, alpha: 1 };
-        const [r, g, b] = hexToRgb(stop.color ?? 0xffffff);
-        setUniformValue(programManager, \`uStop\${index}R\`, r);
-        setUniformValue(programManager, \`uStop\${index}G\`, g);
-        setUniformValue(programManager, \`uStop\${index}B\`, b);
-        setUniformValue(programManager, \`uStop\${index}Offset\`, typeof stop.offset === 'number' ? stop.offset : index);
-        setUniformValue(programManager, \`uStop\${index}Alpha\`, typeof stop.alpha === 'number' ? stop.alpha : 1);
-      }
-
-      setUniformValue(programManager, 'uStopCount', stopCount);
-    }
-
-    for (const [key, value] of Object.entries(controller.uniforms)) {
-      if (key === 'time' || key === 'resolution' || key === 'stops' || key === 'textureKey') {
-        continue;
-      }
-
-      if (key !== 'maxColors' && key.toLowerCase().includes('color')) {
-        const [r, g, b] = hexToRgb(value);
-        const base = key[0].toUpperCase() + key.slice(1);
-        setUniformValue(programManager, \`u\${base}R\`, r);
-        setUniformValue(programManager, \`u\${base}G\`, g);
-        setUniformValue(programManager, \`u\${base}B\`, b);
-      } else if (typeof value === 'boolean') {
-        setUniformValue(programManager, \`u\${key[0].toUpperCase()}\${key.slice(1)}\`, value ? 1 : 0);
-      } else if (typeof value === 'number') {
-        setUniformValue(programManager, \`u\${key[0].toUpperCase()}\${key.slice(1)}\`, value);
-      }
-    }
-  }
-
-  setupTextures(controller: BaseFilterController, textures: unknown[]): void {
-    if (controller.metadata.id !== 'DisplacementFilter') {
-      return;
-    }
-
-    const textureKey = typeof controller.uniforms.textureKey === 'string' ? controller.uniforms.textureKey : 'map';
-    const frame = controller.camera?.scene?.sys.textures.getFrame(textureKey);
-
-    textures[1] = frame?.glTexture ?? textures[0];
-  }
+export interface ${optionsName} {
+${optionFields || '  [key: string]: unknown;'}
 }
 
-${all.map(([className, slug, defaults, controls, body]) => {
-  const nodeName = `Phaser${className}`;
-  return `export class ${nodeName} extends GeneratedFilterNode {
+export const ${metadataName} = {
+  id: '${className}',
+  displayName: '${displayName(slug)}',
+  source: '${source}',
+  fishOnly: ${fishOnlyFilters.has(className) ? 'true' : 'false'},
+  defaults: ${JSON.stringify(defaults)},
+  controls: ${JSON.stringify(controlsMetadata)}
+} satisfies FilterMetadata;
+
+export class ${nodeName} extends GeneratedFilterNode {
   constructor(manager: Manager) {
-    super('${nodeName}', manager, FILTER_METADATA_BY_ID.${className}, FILTER_BODIES.${className});
+    super('${nodeName}', manager, ${metadataName}, fragmentSource);
   }
 }
 
 export class ${className} extends BaseFilterController {
-  constructor(camera: Phaser.Cameras.Scene2D.Camera, options: Record<string, unknown> = {}) {
-    super(camera, '${nodeName}', FILTER_METADATA_BY_ID.${className}, options);
+  constructor(camera: Phaser.Cameras.Scene2D.Camera, options: ${optionsName} = {}) {
+    super(camera, '${nodeName}', ${metadataName}, options as Record<string, unknown>);
   }
 }
 
 export const add${className} = (
   target: PhaserFilterTarget | Phaser.Cameras.Scene2D.Camera,
-  options: Record<string, unknown> = {},
+  options: ${optionsName} = {},
   space: FilterSpace = 'internal',
-): ${className} => addControllerToTarget(target, ${className}, options, space);
+): ${className} => addControllerToTarget(target, ${className}, options as Record<string, unknown>, space);
 `;
-}).join('\n')}
+};
+
+const generatedSource = `import Phaser from 'phaser';
+import { FilterMetadata } from './runtime';
+${all.map(([className, slug]) => `import {
+  ${className},
+  ${className}Metadata,
+  Phaser${className},
+  add${className},
+} from './${slug}';`).join('\n')}
+
+${all.map(([className, slug]) => `export * from './${slug}';`).join('\n')}
+
+export const FILTER_METADATA = ([
+${all.map(([className]) => `  ${className}Metadata,`).join('\n')}
+] satisfies FilterMetadata[]).sort((a, b) => a.displayName.localeCompare(b.displayName));
+
+export const FILTER_METADATA_BY_ID = Object.fromEntries(FILTER_METADATA.map((item) => [item.id, item])) as Record<string, FilterMetadata>;
 
 export const FILTER_RENDER_NODES = {
 ${all.map(([className]) => `  Phaser${className},`).join('\n')}
@@ -240,4 +250,13 @@ export const getFilterMetadata = (id: string): FilterMetadata | undefined => FIL
 `;
 
 mkdirSync(dirname(out), { recursive: true });
-writeFileSync(out, source);
+
+for (const [className, slug, defaults, controls, body, source] of all) {
+  const filterDir = resolve(filtersOut, slug);
+  mkdirSync(filterDir, { recursive: true });
+  writeFileSync(resolve(filterDir, `${slug}.frag`), makeFragment(body, declarationsForFilter(className, defaults)));
+  writeFileSync(resolve(filterDir, `${className}.ts`), filterModuleSource(className, slug, defaults, controls, source));
+  writeFileSync(resolve(filterDir, 'index.ts'), `export * from './${className}';\n`);
+}
+
+writeFileSync(out, generatedSource);

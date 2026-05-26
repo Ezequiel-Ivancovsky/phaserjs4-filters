@@ -138,8 +138,10 @@ These compatibility filters are included for the demo because the original PixiJ
 
 | Path | Purpose |
 |------|---------|
-| `src/filters` | Runtime helpers, generated controllers/render nodes, shaders, and color helpers |
-| `scripts/generate-filters.mjs` | Generates the Phaser filter classes and metadata |
+| `src/filters/<filter-name>` | One folder per filter with `FilterName.ts`, `<filter-name>.frag`, and `index.ts` |
+| `src/filters/generated.ts` | Generated aggregate exports, metadata registry, adders, and render-node registration |
+| `src/filters/runtime.ts` | Shared Phaser controller/render-node helpers |
+| `scripts/generate-filters.mjs` | Generates the per-filter folders, shaders, classes, and metadata |
 | `demo` | Phaser 4 Vite demo scene and styles |
 | `public/assets` | Demo assets derived from the PixiJS Filters demo |
 | `tests` | Lightweight metadata and helper tests |
